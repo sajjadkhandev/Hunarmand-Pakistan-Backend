@@ -12,7 +12,7 @@ const connectDB = require('./src/config/db');
 const { initSocket } = require('./src/socket');
 const logger = require('./src/utils/logger');
 
-const PORT = process.env.PORT || 7000;
+const PORT = process.env.PORT || 5000;
 
 // Connect to MongoDB and then start Express server
 const startServer = async () => {
