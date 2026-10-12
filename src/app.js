@@ -16,16 +16,17 @@ const allowedOrigins = [
   process.env.CLIENT_URL || 'http://localhost:5173',
   'http://localhost:3000',
   'http://127.0.0.1:5173',
+  'https://hunarmand-pakistan.vercel.app',
 ];
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, postman)
-      if (!origin || allowedOrigins.includes(origin)) {
+      // Allow requests with no origin (like mobile apps, curl, postman) or matching vercel.app
+      if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
         return callback(null, true);
       }
-      return callback(null, true); // Allow during local development
+      return callback(null, true); // Allow during development & cloud deployment
     },
     credentials: true,
   })
