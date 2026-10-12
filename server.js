@@ -1,7 +1,10 @@
-/**
- * Hunarmand Pakistan - Server Entry Point
- * Initializes environment variables, database connection, and starts HTTP server
- */
+// Force reliable public DNS for cloud environments (prevents Render querySrv ETIMEOUT)
+const dns = require('dns');
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch (e) {
+  // Ignore in environments where setServers is restricted
+}
 
 require('dotenv').config();
 const app = require('./src/app');

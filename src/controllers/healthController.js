@@ -4,6 +4,7 @@
  */
 
 const mongoose = require('mongoose');
+const { getLastDbError } = require('../config/db');
 
 const getHealthStatus = (req, res) => {
   const dbStateMap = {
@@ -14,10 +15,13 @@ const getHealthStatus = (req, res) => {
   };
 
   const dbStatus = dbStateMap[mongoose.connection.readyState] || 'Unknown';
+  const isDatabaseConnected = mongoose.connection.readyState === 1;
 
-  res.status(200).json({
-    success: true,
-    message: 'Hunarmand Pakistan Backend API is running smoothly.',
+  res.status(isDatabaseConnected ? 200 : 503).json({
+    success: isDatabaseConnected,
+    message: isDatabaseConnected
+      ? 'Hunarmand Pakistan Backend API is running smoothly.'
+      : 'Database connection in progress...',
     project: {
       name: 'Hunarmand Pakistan',
       tagline: 'Har Hunar, Har Shehar, Aap Ke Qareeb.',
@@ -25,7 +29,7 @@ const getHealthStatus = (req, res) => {
       phase: 'Phase 1 - Project Foundation',
     },
     system: {
-      status: 'healthy',
+      status: isDatabaseConnected ? 'healthy' : 'unhealthy',
       uptime: `${Math.floor(process.uptime())} seconds`,
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV || 'development',
@@ -33,8 +37,9 @@ const getHealthStatus = (req, res) => {
     },
     database: {
       status: dbStatus,
-      databaseName: mongoose.connection.name || 'hunarmand_pakistan',
-      connected: mongoose.connection.readyState === 1,
+      databaseName: mongoose.connection.name || 'test',
+      connected: isDatabaseConnected,
+      error: getLastDbError(),
     },
   });
 };
