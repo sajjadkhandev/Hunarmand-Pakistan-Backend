@@ -4,6 +4,7 @@
  */
 
 const express = require('express');
+const mongoose = require('mongoose');
 const cors = require('cors');
 const apiRoutes = require('./routes');
 const { notFoundHandler, errorHandler } = require('./middlewares/errorHandler');
@@ -39,6 +40,20 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Simple incoming request logging middleware
 app.use((req, res, next) => {
   logger.info(`${req.method} ${req.originalUrl}`);
+  next();
+});
+
+// Database readiness check: Prevents Mongoose buffering timeout if connection is pending
+app.use((req, res, next) => {
+  if (req.path === '/api/health' || req.path === '/') {
+    return next();
+  }
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({
+      success: false,
+      message: 'Database connect ho raha hai. Baraye meharbani kuch seconds baad dobara try karein.',
+    });
+  }
   next();
 });
 
