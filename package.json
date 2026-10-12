@@ -1,0 +1,42 @@
+{
+  "name": "hunarmand-pakistan-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Hunarmand Pakistan - Service Marketplace",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "seed:categories": "node src/utils/seedCategories.js",
+    "seed:all": "node src/utils/seedAll.js",
+    "test:models": "node src/utils/testModels.js",
+    "test:auth": "node src/utils/testAuth.js",
+    "test:categories": "node src/utils/testCategories.js",
+    "test:workers": "node src/utils/testWorkers.js",
+    "test:search": "node src/utils/testSearch.js",
+    "test:requests": "node src/utils/testRequests.js",
+    "test:reviews": "node src/utils/testReviews.js",
+    "test:admin": "node src/utils/testAdmin.js",
+    "test:chat": "node src/utils/testChat.js"
+  },
+  "keywords": [
+    "hunarmand-pakistan",
+    "express",
+    "mongodb",
+    "mern"
+  ],
+  "author": "Hunarmand Pakistan Team",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.5",
+    "socket.io": "^4.8.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
