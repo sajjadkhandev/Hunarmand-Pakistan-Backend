@@ -5,8 +5,14 @@
 
 const jwt = require('jsonwebtoken');
 
+const getSecret = () => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET environment variable is required.');
+  }
+  return process.env.JWT_SECRET;
+};
+
 const generateToken = (userId, role) => {
-  const secret = process.env.JWT_SECRET || 'hunarmand_pakistan_development_secret_key_12345';
   const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
 
   return jwt.sign(
@@ -14,7 +20,7 @@ const generateToken = (userId, role) => {
       id: userId,
       role: role,
     },
-    secret,
+    getSecret(),
     {
       expiresIn: expiresIn,
     }
@@ -22,8 +28,7 @@ const generateToken = (userId, role) => {
 };
 
 const verifyToken = (token) => {
-  const secret = process.env.JWT_SECRET || 'hunarmand_pakistan_development_secret_key_12345';
-  return jwt.verify(token, secret);
+  return jwt.verify(token, getSecret());
 };
 
 module.exports = {
