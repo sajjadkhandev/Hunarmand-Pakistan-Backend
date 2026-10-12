@@ -6,6 +6,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const connectDB = require('./config/db');
 const apiRoutes = require('./routes');
 const { notFoundHandler, errorHandler } = require('./middlewares/errorHandler');
 const logger = require('./utils/logger');
@@ -20,11 +21,26 @@ const allowedOrigins = [
   'https://hunarmand-pakistan.vercel.app',
 ];
 
+const isLocalDevelopmentOrigin = (origin) => {
+  if (process.env.NODE_ENV === 'production') return false;
+
+  try {
+    const parsedOrigin = new URL(origin);
+    return (
+      parsedOrigin.protocol === 'http:' &&
+      ['localhost', '127.0.0.1'].includes(parsedOrigin.hostname) &&
+      Boolean(parsedOrigin.port)
+    );
+  } catch {
+    return false;
+  }
+};
+
 app.use(
   cors({
     origin: (origin, callback) => {
       // Allow requests with no origin (like mobile apps, curl, postman) or an explicit trusted origin.
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || allowedOrigins.includes(origin) || isLocalDevelopmentOrigin(origin)) {
         return callback(null, true);
       }
       return callback(null, false);
@@ -49,6 +65,9 @@ app.use((req, res, next) => {
     return next();
   }
   if (mongoose.connection.readyState !== 1) {
+    if (mongoose.connection.readyState === 0) {
+      connectDB().catch(() => {});
+    }
     return res.status(503).json({
       success: false,
       message: 'Database connect ho raha hai. Baraye meharbani kuch seconds baad dobara try karein.',
